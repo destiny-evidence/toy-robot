@@ -1,0 +1,52 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+
+[tool.mypy]
+explicit_package_bases = true
+plugins = ["pydantic.mypy"]
+
+[tool.poetry]
+authors = [
+    "Jack Walmisley <jack@covidence.org>",
+]
+description = "Example robot for producing toy enhancements against destiny repo"
+name = "toy-robot"
+package-mode = false
+readme = "README.md"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+destiny-robots = {develop = true, path = "../destiny-repository/libs/sdk"}
+fastapi = {extras = ["standard"], version = "^0.115.6"}
+pydantic-settings = "^2.7.1"
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.1"
+ruff = "^0.8.6"
+
+[tool.ruff]
+extend-exclude = ["app/migrations/versions/*.py", "docs/*.py"]
+fix = true
+force-exclude = true
+target-version = "py312"
+lint.ignore = [
+    "COM812", # trailing commas (ruff-format recommended)
+    "D203", # no-blank-line-before-class
+    "D212", # multi-line-summary-first-line
+    "D407", # removed dashes lines under sections
+    "D417", # argument description in docstring (unreliable)
+    "FIX002", # implicit trust that TODOs are not trivial, or else they would be fixed
+    "ISC001", # simplify implicit str concatenation (ruff-format recommended)
+]
+lint.select = ["ALL"]
+lint.mccabe.max-complexity = 18
+lint.pep8-naming.classmethod-decorators = ["classmethod"]
+
+[tool.tomlsort]
+all = true
+spaces_indent_inline_array = 4
+trailing_comma_inline_array = true
+overrides."project.classifiers".inline_arrays = false
+overrides."tool.coverage.paths.source".inline_arrays = false
