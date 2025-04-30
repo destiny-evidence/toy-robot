@@ -17,7 +17,7 @@ readme = "README.md"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
-destiny-robots = {develop = true, path = "../destiny-repository/libs/sdk"}
+destiny-sdk = {develop = true, path = "../destiny-repository/libs/sdk"}
 fastapi = {extras = ["standard"], version = "^0.115.6"}
 pydantic-settings = "^2.7.1"
 python = "^3.12"

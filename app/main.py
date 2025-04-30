@@ -5,8 +5,8 @@ import uuid
 from typing import Final
 
 import httpx
-from destiny_robots.core import Annotation, AnnotationEnhancement, EnhancementCreate
-from destiny_robots.robots import RobotError, RobotRequest, RobotResult
+from destiny_sdk.core import Annotation, AnnotationEnhancement, EnhancementCreate
+from destiny_sdk.robots import RobotError, RobotRequest, RobotResult
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, status
 
 TITLE: Final[str] = "Toy Robot"
@@ -67,7 +67,7 @@ def create_toy_enhancement(request: RobotRequest) -> None:
     with httpx.Client() as client:
         client.post(
             request.extra_fields.get("callback_url"),
-            json=robot_result.model_dump_json(),
+            json=robot_result.model_dump(mode="json"),
         )
 
 
