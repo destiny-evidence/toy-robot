@@ -14,6 +14,8 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 ### Installing Dependencies
 
+We install the desitny_sdk directly from github, so you will need to have a github ssh key set up to be able to run poetry install.
+
 Once Poetry is installed, install dependencies:
 
 ```sh
@@ -45,3 +47,15 @@ Run the development server:
 ```sh
 poetry run fastapi dev
 ```
+
+## Container Image
+
+When building the docker image
+
+```sh
+docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --tag toy-robot .
+```
+
+This [mounts your github ssh key](https://docs.docker.com/reference/dockerfile/#example-access-to-gitlab) in the builder step so that poetry can install destiny_sdk from github.
+
+If you run into trouble you might need to start the ssh agent.
