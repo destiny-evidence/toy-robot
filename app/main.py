@@ -62,7 +62,7 @@ def create_toy_enhancement(request: RobotRequest) -> None:
         ),
     )
 
-    robot_result = RobotResult(request_id=request.id, enhancements=[enhancement])
+    robot_result = RobotResult(request_id=request.id, enhancement=enhancement)
 
     with httpx.Client() as client:
         client.post(
