@@ -5,7 +5,12 @@ import uuid
 from typing import Final
 
 import httpx
-from destiny_sdk.core import Annotation, AnnotationEnhancement, EnhancementCreate
+from destiny_sdk.core import (
+    Annotation,
+    AnnotationEnhancement,
+    EnhancementCreate,
+    Visibility,
+)
 from destiny_sdk.robots import RobotError, RobotRequest, RobotResult
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, status
 
@@ -47,10 +52,10 @@ def create_toy_enhancement(request: RobotRequest) -> None:
     """Create a toy annotation enhancement."""
     toy = random.choice(TOYS)  # noqa: S311
 
-    # (TODO) Jack: Enhancement create should include a reference id?
     enhancement = EnhancementCreate(
+        reference_id=request.reference.id,
         source=TITLE,
-        visibility="public",
+        visibility=Visibility.PUBLIC,
         processor_version="0.1.0",  # replace with project version?
         content_version=f"{uuid.uuid4()}",
         content=AnnotationEnhancement(
