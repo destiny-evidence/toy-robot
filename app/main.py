@@ -50,7 +50,7 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
         reference_id=request.reference.id,
         source=TITLE,
         visibility=request.reference.visibility,
-        processor_version="0.1.0",  # replace with project version?
+        robot_version="0.1.0",
         content_version=f"{uuid.uuid4()}",
         content=destiny_sdk.enhancements.AnnotationEnhancement(
             annotations=[
