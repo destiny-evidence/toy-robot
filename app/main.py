@@ -4,9 +4,8 @@ import random
 import uuid
 from typing import Final
 
+import destiny_sdk
 import httpx
-from destiny_sdk.core import Annotation, AnnotationEnhancement, EnhancementCreate
-from destiny_sdk.robots import RobotError, RobotRequest, RobotResult
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, status
 
 TITLE: Final[str] = "Toy Robot"
@@ -43,26 +42,28 @@ TOYS = [
 ]
 
 
-def create_toy_enhancement(request: RobotRequest) -> None:
+def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
     """Create a toy annotation enhancement."""
     toy = random.choice(TOYS)  # noqa: S311
 
-    # (TODO) Jack: Enhancement create should include a reference id?
-    enhancement = EnhancementCreate(
+    enhancement = destiny_sdk.enhancements.Enhancement(
+        reference_id=request.reference.id,
         source=TITLE,
-        visibility="public",
-        processor_version="0.1.0",  # replace with project version?
+        visibility=request.reference.visibility,
+        robot_version="0.1.0",
         content_version=f"{uuid.uuid4()}",
-        content=AnnotationEnhancement(
+        content=destiny_sdk.enhancements.AnnotationEnhancement(
             annotations=[
-                Annotation(
+                destiny_sdk.enhancements.Annotation(
                     annotation_type="example:toy", label="toy", data={"toy": toy}
                 )
             ]
         ),
     )
 
-    robot_result = RobotResult(request_id=request.id, enhancement=enhancement)
+    robot_result = destiny_sdk.robots.RobotResult(
+        request_id=request.id, enhancement=enhancement
+    )
 
     with httpx.Client() as client:
         client.post(
@@ -73,11 +74,11 @@ def create_toy_enhancement(request: RobotRequest) -> None:
 
 @app.post("/toy/enhancement/", status_code=status.HTTP_202_ACCEPTED)
 def request_toy_enhancement(
-    request: RobotRequest, background_tasks: BackgroundTasks
+    request: destiny_sdk.robots.RobotRequest, background_tasks: BackgroundTasks
 ) -> Response:
     """Receive a request to create a toy enhancement."""
     if not request.extra_fields.get("callback_url"):
-        error = RobotError(
+        error = destiny_sdk.robots.RobotError(
             message="No callback url provided, cannot create enhancement"
         )
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
