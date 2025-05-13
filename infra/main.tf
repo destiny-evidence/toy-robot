@@ -49,6 +49,14 @@ module "container_app_toy_robot" {
   resource_group_name             = azurerm_resource_group.robot_resource_group.name
   region                          = azurerm_resource_group.robot_resource_group.location
 
+  # We're the api url for the destiny repository here, which the toy robot will use to authenticate against
+  env_vars = [
+    {
+      name  = "AZURE_APPLICATION_URL"
+      value = "api://${data.azuread_application.destiny_repository.client_id}"
+    },
+  ]
+
   # You can see here that we're passing the user assigned identity that we created above to the client application.
   # This identity has the robot role assignment and will allow the robot to authenticate with destiny repository
   identity = {

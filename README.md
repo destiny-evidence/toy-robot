@@ -66,8 +66,12 @@ If you want to deploy the toy robot into Azure using the provided terraform infr
 
 ```sh
 docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --platform linux/amd64 --tag destinyevidenceregistry.azurecr.io/toy-robot .
-az acr login [Add the url]
+az acr login --name destinyevidenceregistry
+docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
+```
 
-docker tag toy-robot [URL]-toy-robot
-docker push [ URL]-toy-robot
+Then you can update the container app image with the following command
+
+```sh
+az containerapp update -n toy-robot-stag-app -g toy-robot-resource-group --image destinyevidenceregistry.azurecr.io/toy-robot:latest
 ```
