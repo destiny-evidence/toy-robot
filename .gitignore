@@ -175,3 +175,6 @@ cython_debug/
 
 # vscode folder
 .vscode/
+
+# Terraform folder
+.terraform/

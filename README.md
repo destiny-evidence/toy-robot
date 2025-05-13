@@ -59,3 +59,15 @@ docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --tag toy-robot .
 This [mounts your github ssh key](https://docs.docker.com/reference/dockerfile/#example-access-to-gitlab) in the builder step so that poetry can install destiny_sdk from github.
 
 If you run into trouble you might need to start the ssh agent.
+
+### Manual push
+
+If you want to deploy the toy robot into Azure using the provided terraform infrastructure, you'll need to manually push the docker image to a container registry. We're using destiny-shared-infra for this.
+
+```sh
+docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --platform linux/amd64 --tag destinyevidenceregistry.azurecr.io/toy-robot .
+az acr login [Add the url]
+
+docker tag toy-robot [URL]-toy-robot
+docker push [ URL]-toy-robot
+```
