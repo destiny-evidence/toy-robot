@@ -55,6 +55,10 @@ module "container_app_toy_robot" {
       name  = "AZURE_APPLICATION_URL"
       value = "api://${data.azuread_application.destiny_repository.client_id}"
     },
+    {
+      name  = "DESTINY_REPOSITORY_URL"
+      value = var.destiny_repository_url
+    }
   ]
 
   # You can see here that we're passing the user assigned identity that we created above to the client application.

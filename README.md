@@ -45,7 +45,7 @@ See [.pre-commit-config.yaml](.pre-commit-config.yaml) for the list of pre-commi
 Run the development server:
 
 ```sh
-poetry run fastapi dev
+poetry run fastapi dev --port 8001
 ```
 
 ## Container Image

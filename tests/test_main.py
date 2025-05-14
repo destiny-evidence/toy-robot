@@ -20,18 +20,15 @@ def test_root() -> None:
 
 def test_create_toy_enhancement_happy_path(httpx_mock: HTTPXMock) -> None:
     """Test that we can create an enhancement."""
-    callback_url = "http://www.make-enhancement-here.com"
     request_id = uuid.uuid4()
 
     # Mock out our callback
-    httpx_mock.add_response(
-        method="POST", url=callback_url, status_code=status.HTTP_201_CREATED
-    )
+    httpx_mock.add_response(method="POST", status_code=status.HTTP_201_CREATED)
 
     request_body = {
         "id": f"{request_id}",
         "reference": {"id": f"{uuid.uuid4()}", "identifiers": [], "enhancements": []},
-        "extra_fields": {"callback_url": callback_url},
+        "extra_fields": {},
     }
 
     response = client.post("/toy/enhancement", json=request_body)

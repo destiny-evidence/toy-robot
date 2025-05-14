@@ -11,6 +11,10 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
+    access_token: str | None = Field(
+        default=None,
+        description="Only needed if in dev environment and authing against Azure.",
+    )
     azure_application_url: str | None = Field(
         default=None, description="application url for destiny repository."
     )
@@ -18,11 +22,8 @@ class Settings(BaseSettings):
         default=None,
         description="client id for the toy robot application registration.",
     )
+    destiny_repository_url: str
     env: str = "production"
-    access_token: str | None = Field(
-        default=None,
-        description="Only needed if in dev environment and authing against Azure.",
-    )
 
 
 @lru_cache(maxsize=1)
