@@ -12,21 +12,21 @@ data "azuread_service_principal" "destiny_repository" {
   client_id = data.azuread_application.destiny_repository.client_id
 }
 
-# This might already exist for you if your robot has already been deployed
+# This might exist for you if your robot has already been deployed
 # In this case, you can use a data resource instead https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 resource "azurerm_resource_group" "robot_resource_group" {
   name     = "rg-${var.robot_name}-staging"
   location = "swedencentral"
 }
 
-# Create a user assigned identity for our client app
+# Create a user assigned identity for our robot
 resource "azurerm_user_assigned_identity" "toy_robot" {
   location            = azurerm_resource_group.robot_resource_group.location # Replace the example!
   name                = var.robot_name
   resource_group_name = azurerm_resource_group.robot_resource_group.name # Replace the example!
 }
 
-# Finally create the role assignment for the client app
+# Finally create the role assignment for our robot
 resource "azuread_app_role_assignment" "toy_robot" {
   app_role_id         = data.azuread_service_principal.destiny_repository.app_role_ids["robot"]
   principal_object_id = azurerm_user_assigned_identity.toy_robot.principal_id
