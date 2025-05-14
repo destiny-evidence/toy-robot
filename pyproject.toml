@@ -31,6 +31,9 @@ ruff = "^0.8.6"
 
 [tool.pytest.ini_options]
 addopts = ["--color=yes", "--import-mode=importlib", "--verbose"]
+env = [
+    "ENV=dev",
+]
 pythonpath = "."
 testpaths = ["tests"]
 
