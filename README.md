@@ -65,6 +65,7 @@ If you run into trouble you might need to start the ssh agent.
 If you want to deploy the toy robot into Azure using the provided terraform infrastructure, you'll need to manually push the docker image to a container registry. We're using destiny-shared-infra for this.
 
 ```sh
+az login
 docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --platform linux/amd64 --tag destinyevidenceregistry.azurecr.io/toy-robot .
 az acr login --name destinyevidenceregistry
 docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
@@ -73,5 +74,5 @@ docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
 Then you can update the container app image with the following command
 
 ```sh
-az containerapp update -n toy-robot-stag-app -g toy-robot-resource-group --image destinyevidenceregistry.azurecr.io/toy-robot:latest
+az containerapp update -n toy-robot-stag-app -g rg-toy-robot-staging --image destinyevidenceregistry.azurecr.io/toy-robot:latest
 ```

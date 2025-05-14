@@ -1,5 +1,6 @@
 """Main module for the Toy Robot."""
 
+import os
 import random
 import uuid
 from typing import Final
@@ -77,7 +78,11 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
     """Send request to creat an toy enhancement."""
     robot_result = build_toy_enhancement(request)
 
-    if settings.env != "dev":
+    token = None
+    # Allow us to hit a deployment of destiny repository while running locally.
+    if settings.env == "dev":
+        token = os.environ["ACCESS_TOKEN"]
+    else:
         auth_client = msal.ManagedIdentityClient(
             managed_identity=msal.UserAssignedManagedIdentity(
                 client_id=settings.azure_client_id
@@ -85,11 +90,16 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
             http_client=httpx.Client(),
         )
 
-        auth_client.acquire_token_for_client(resource=settings.azure_application_url)
+        result = auth_client.acquire_token_for_client(
+            resource=settings.azure_application_url
+        )
+
+        token = result["access_token"]
 
     with httpx.Client() as client:
         client.post(
             request.extra_fields.get("callback_url"),
+            headers={"Authorization": f"Bearer {token}"},
             json=robot_result.model_dump(mode="json"),
         )
 
