@@ -2,7 +2,7 @@
 
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,16 +13,17 @@ class Settings(BaseSettings):
 
     access_token: str | None = Field(
         default=None,
-        description="Only needed if in dev environment and authing against Azure.",
+        description="Token needed if in dev environment and authing against Azure.",
     )
     azure_application_url: str | None = Field(
-        default=None, description="application url for destiny repository."
+        default=None,
+        description="application url for destiny repository, starts with api://.",
     )
     azure_client_id: str | None = Field(
         default=None,
         description="client id for the toy robot application registration.",
     )
-    destiny_repository_url: str
+    destiny_repository_url: HttpUrl
     env: str = "production"
 
 

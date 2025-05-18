@@ -48,6 +48,12 @@ Run the development server:
 poetry run fastapi dev --port 8001
 ```
 
+## Authentication Against Destiny Repository
+
+- If you are running the toy robot with a local instance of destiny repository that is not enforcing authentication, set `ACCESS_TOKEN` in `.env` to a nonsense string
+- If you are running a local robot against an instance of destiny repository deployed in Azure you will need to generate your own access token for destiny repository. Use this to set `ACCESS_TOKEN` in `.env`
+- When the Toy robot is deployed as an Azure container app, it authenticates against destiny repository with a managed identity, which is set up in `infra/main.tf`. This makes use of the `AZURE_APPLICATION_URL` and the `AZURE_CLIENT_ID` environment variables. It's not possible to test the managed identity authentication locally.
+
 ## Container Image
 
 When building the docker image
