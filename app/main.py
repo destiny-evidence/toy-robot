@@ -6,7 +6,12 @@ from typing import Final
 
 import destiny_sdk
 import httpx
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, status
+import msal
+from fastapi import BackgroundTasks, FastAPI, Response, status
+
+from app.config import get_settings
+
+settings = get_settings()
 
 TITLE: Final[str] = "Toy Robot"
 app = FastAPI(title=TITLE)
@@ -42,8 +47,10 @@ TOYS = [
 ]
 
 
-def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
-    """Create a toy annotation enhancement."""
+def build_toy_enhancement(
+    request: destiny_sdk.robots.RobotRequest,
+) -> destiny_sdk.robots.RobotResult:
+    """Build the request body for creating an enhancement."""
     toy = random.choice(TOYS)  # noqa: S311
 
     enhancement = destiny_sdk.enhancements.Enhancement(
@@ -61,13 +68,37 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
         ),
     )
 
-    robot_result = destiny_sdk.robots.RobotResult(
+    return destiny_sdk.robots.RobotResult(
         request_id=request.id, enhancement=enhancement
     )
 
+
+def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
+    """Send request to creat an toy enhancement."""
+    robot_result = build_toy_enhancement(request)
+
+    token = None
+    # Allow us to hit a deployment of destiny repository while running locally.
+    if settings.env == "dev":
+        token = settings.access_token
+    else:
+        auth_client = msal.ManagedIdentityClient(
+            managed_identity=msal.UserAssignedManagedIdentity(
+                client_id=settings.azure_client_id
+            ),
+            http_client=httpx.Client(),
+        )
+
+        result = auth_client.acquire_token_for_client(
+            resource=settings.azure_application_url
+        )
+
+        token = result["access_token"]
+
     with httpx.Client() as client:
         client.post(
-            request.extra_fields.get("callback_url"),
+            str(settings.destiny_repository_url),
+            headers={"Authorization": f"Bearer {token}"},
             json=robot_result.model_dump(mode="json"),
         )
 
@@ -77,12 +108,6 @@ def request_toy_enhancement(
     request: destiny_sdk.robots.RobotRequest, background_tasks: BackgroundTasks
 ) -> Response:
     """Receive a request to create a toy enhancement."""
-    if not request.extra_fields.get("callback_url"):
-        error = destiny_sdk.robots.RobotError(
-            message="No callback url provided, cannot create enhancement"
-        )
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-
     background_tasks.add_task(create_toy_enhancement, request)
 
     return Response(status_code=status.HTTP_202_ACCEPTED)

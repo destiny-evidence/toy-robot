@@ -45,8 +45,14 @@ See [.pre-commit-config.yaml](.pre-commit-config.yaml) for the list of pre-commi
 Run the development server:
 
 ```sh
-poetry run fastapi dev
+poetry run fastapi dev --port 8001
 ```
+
+## Authentication Against Destiny Repository
+
+- If you are running the toy robot with a local instance of destiny repository that is not enforcing authentication, set `ACCESS_TOKEN` in `.env` to a nonsense string
+- If you are running a local robot against an instance of destiny repository deployed in Azure you will need to generate your own access token for destiny repository. Use this to set `ACCESS_TOKEN` in `.env`
+- When the Toy robot is deployed as an Azure container app, it authenticates against destiny repository with a managed identity, which is set up in `infra/main.tf`. This makes use of the `AZURE_APPLICATION_URL` and the `AZURE_CLIENT_ID` environment variables. It's not possible to test the managed identity authentication locally.
 
 ## Container Image
 
@@ -59,3 +65,20 @@ docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --tag toy-robot .
 This [mounts your github ssh key](https://docs.docker.com/reference/dockerfile/#example-access-to-gitlab) in the builder step so that poetry can install destiny_sdk from github.
 
 If you run into trouble you might need to start the ssh agent.
+
+### Manual push
+
+If you want to deploy the toy robot into Azure using the provided terraform infrastructure, you'll need to manually push the docker image to a container registry. We're using destiny-shared-infra for this.
+
+```sh
+az login
+docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --platform linux/amd64 --tag destinyevidenceregistry.azurecr.io/toy-robot .
+az acr login --name destinyevidenceregistry
+docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
+```
+
+Then you can update the container app image with the following command
+
+```sh
+az containerapp update -n toy-robot-stag-app -g rg-toy-robot-staging --image destinyevidenceregistry.azurecr.io/toy-robot:latest
+```
