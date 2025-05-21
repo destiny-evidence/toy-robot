@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     )
     azure_client_id: str | None = Field(
         default=None,
-        description="client id for the toy robot application registration.",
+        description="Client id for the toy robot application registration.",
     )
     azure_application_id: str = Field(
         description="Id of the application registration for toy robot"
@@ -27,7 +27,8 @@ class Settings(BaseSettings):
     )
     destiny_repository_application_url: str | None = Field(
         default=None,
-        description="application url for destiny repository, starts with api://.",
+        pattern="api://*",
+        description="Application url for destiny repository.",
     )
     destiny_repository_url: HttpUrl
 
