@@ -7,8 +7,9 @@ from typing import Final
 import destiny_sdk
 import httpx
 import msal
-from fastapi import BackgroundTasks, FastAPI, Response, status
+from fastapi import BackgroundTasks, Depends, FastAPI, Response, status
 
+from app.auth import toy_collector_auth
 from app.config import get_settings
 
 settings = get_settings()
@@ -103,7 +104,11 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
         )
 
 
-@app.post("/toy/enhancement/", status_code=status.HTTP_202_ACCEPTED)
+@app.post(
+    "/toy/enhancement/",
+    status_code=status.HTTP_202_ACCEPTED,
+    dependencies=[Depends(toy_collector_auth)],
+)
 def request_toy_enhancement(
     request: destiny_sdk.robots.RobotRequest, background_tasks: BackgroundTasks
 ) -> Response:
