@@ -15,15 +15,22 @@ class Settings(BaseSettings):
         default=None,
         description="Token needed if in dev environment and authing against Azure.",
     )
-    azure_application_url: str | None = Field(
-        default=None,
-        description="application url for destiny repository, starts with api://.",
-    )
     azure_client_id: str | None = Field(
         default=None,
         description="client id for the toy robot application registration.",
     )
+    azure_application_id: str = Field(
+        description="Id of the application registration for toy robot"
+    )
+    azure_tenant_id: str = Field(
+        description="Id of the tenant that the toy robot is deployed in."
+    )
+    destiny_repository_application_url: str | None = Field(
+        default=None,
+        description="application url for destiny repository, starts with api://.",
+    )
     destiny_repository_url: HttpUrl
+
     env: str = "production"
 
 

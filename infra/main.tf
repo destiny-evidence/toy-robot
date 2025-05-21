@@ -105,13 +105,21 @@ module "container_app_toy_robot" {
   # The necessaary `AZURE_CLIENT_ID` environment variable is set by the container app module.
   env_vars = [
     {
-      name  = "AZURE_APPLICATION_URL"
+      name  = "AZURE_APPLICATION_ID"
+      value = azuread_application_registration.toy_robot.client_id
+    },
+    {
+      name  = "AZURE_TENANT_ID"
+      value = data.azuread_client_config.current.tenant_id
+    },
+    {
+      name  = "DESTINY_REPOSITORY_APPLICATION_URL"
       value = "api://${data.azuread_application.destiny_repository.client_id}"
     },
     {
       name  = "DESTINY_REPOSITORY_URL"
       value = var.destiny_repository_url
-    }
+    },
   ]
 
   # Ingress changes will be ignored to avoid messing up manual custom domain config.

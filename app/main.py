@@ -91,7 +91,7 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
         )
 
         result = auth_client.acquire_token_for_client(
-            resource=settings.azure_application_url
+            resource=settings.destiny_repository_application_url
         )
 
         token = result["access_token"]

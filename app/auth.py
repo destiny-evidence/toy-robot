@@ -21,7 +21,9 @@ def auth_strategy() -> AuthMethod:
         return SuccessAuth()
 
     return AzureJwtAuth(
-        tenant_id="not yet", application_id="not yet", scope=AuthScopes.TOY_COLLECTOR
+        tenant_id=settings.azure_tenant_id,
+        application_id=settings.azure_application_id,
+        scope=AuthScopes.TOY_COLLECTOR,
     )
 
 
