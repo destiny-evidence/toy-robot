@@ -4,7 +4,7 @@ terraform {
   cloud {
     organization = "destiny-evidence"
     workspaces {
-      name = "toy-robot"
+      name = "toy-robot-staging"
     }
   }
 
