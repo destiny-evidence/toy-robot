@@ -439,7 +439,7 @@ python-jose = "^3.4.0"
 
 [package.source]
 reference = "authenticate-against-robots"
-resolved_reference = "ebb01cb8a733e37078cd5fdb247416dd3527f3e6"
+resolved_reference = "68246d78bd62127957e4cef80249ec8f437ee2ae"
 subdirectory = "libs/sdk"
 type = "git"
 url = "ssh://git@github.com/destiny-evidence/destiny-repository.git"

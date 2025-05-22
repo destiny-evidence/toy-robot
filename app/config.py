@@ -1,9 +1,27 @@
 """API config parsing and model."""
 
+from enum import StrEnum
 from functools import lru_cache
 
 from pydantic import Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Environment(StrEnum):
+    """
+    Environment that the toy robot is running in.
+
+    As this robot is for demo purposes only, we do not accept `production` as a value
+
+    **Allowed values**:
+    - `local`: The robot is running locally
+    - `development`: The robot is running in development
+    - `staging`: The robot is running in staging
+    """
+
+    LOCAL = "local"
+    DEVELOPMENT = "development"
+    STAGING = "staging"
 
 
 class Settings(BaseSettings):
@@ -32,7 +50,7 @@ class Settings(BaseSettings):
     )
     destiny_repository_url: HttpUrl
 
-    env: str = "production"
+    env: Environment = Environment.STAGING
 
 
 @lru_cache(maxsize=1)

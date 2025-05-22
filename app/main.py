@@ -7,7 +7,7 @@ from typing import Final
 import destiny_sdk
 from fastapi import BackgroundTasks, Depends, FastAPI, Response, status
 
-from app.auth import toy_collector_auth
+from app.auth import destiny_repo_auth, toy_collector_auth
 from app.config import get_settings
 
 settings = get_settings()
@@ -76,18 +76,8 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
     """Send request to creat an toy enhancement."""
     robot_result = build_toy_enhancement(request)
 
-    if settings.env == "dev":
-        auth_method = destiny_sdk.client_auth.AccessTokenAuthentication(
-            access_token=settings.access_token
-        )
-    else:
-        auth_method = destiny_sdk.client_auth.ManagedIdentityAuthentication(
-            azure_application_url=settings.destiny_repository_application_url,
-            azure_client_id=settings.azure_client_id,
-        )
-
-    destiny_sdk.client_auth.send_to_destiny_repo(
-        auth_method=auth_method,
+    destiny_sdk.client_auth.send_robot_result(
+        auth_method=destiny_repo_auth(),
         url=settings.destiny_repository_url,
         robot_result=robot_result,
     )
