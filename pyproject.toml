@@ -17,10 +17,10 @@ readme = "README.md"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
-destiny-sdk = {git = "ssh://git@github.com:destiny-evidence/destiny-repository.git", rev = "main", subdirectory = "libs/sdk"}
+destiny-sdk = {git = "ssh://git@github.com:destiny-evidence/destiny-repository.git", rev = "authenticate-against-robots", subdirectory = "libs/sdk"}
 fastapi = {extras = ["standard"], version = "^0.115.6"}
-httpx = "^0.28.1"
-msal = "^1.32.3"
+lock = "^2018.3.25.2110"
+poetry = "^2.1.3"
 pydantic-settings = "^2.7.1"
 python = "^3.12"
 
