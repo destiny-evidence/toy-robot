@@ -17,13 +17,11 @@ class Environment(StrEnum):
     - `local`: The robot is running locally
     - `development`: The robot is running in development
     - `staging`: The robot is running in staging
-    - `test`: The robot is running as a test fixture for the repository
     """
 
     LOCAL = "local"
     DEVELOPMENT = "development"
     STAGING = "staging"
-    TEST = "test"
 
 
 class Settings(BaseSettings):
