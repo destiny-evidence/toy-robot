@@ -5,11 +5,9 @@ import uuid
 from typing import Final
 
 import destiny_sdk
-import httpx
-import msal
 from fastapi import BackgroundTasks, Depends, FastAPI, Response, status
 
-from app.auth import toy_collector_auth
+from app.auth import destiny_repo_auth, toy_collector_auth
 from app.config import get_settings
 
 settings = get_settings()
@@ -53,6 +51,7 @@ def build_toy_enhancement(
 ) -> destiny_sdk.robots.RobotResult:
     """Build the request body for creating an enhancement."""
     toy = random.choice(TOYS)  # noqa: S311
+    score = round(random.randint(0, 100) / 100)  # noqa: S311
 
     enhancement = destiny_sdk.enhancements.Enhancement(
         reference_id=request.reference.id,
@@ -62,8 +61,8 @@ def build_toy_enhancement(
         content_version=f"{uuid.uuid4()}",
         content=destiny_sdk.enhancements.AnnotationEnhancement(
             annotations=[
-                destiny_sdk.enhancements.Annotation(
-                    annotation_type="example:toy", label="toy", data={"toy": toy}
+                destiny_sdk.enhancements.ScoreAnnotation(
+                    scheme="example:toy", label="toy", score=score, data={"toy": toy}
                 )
             ]
         ),
@@ -78,30 +77,11 @@ def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
     """Send request to creat an toy enhancement."""
     robot_result = build_toy_enhancement(request)
 
-    token = None
-    # Allow us to hit a deployment of destiny repository while running locally.
-    if settings.env == "dev":
-        token = settings.access_token
-    else:
-        auth_client = msal.ManagedIdentityClient(
-            managed_identity=msal.UserAssignedManagedIdentity(
-                client_id=settings.azure_client_id
-            ),
-            http_client=httpx.Client(),
-        )
-
-        result = auth_client.acquire_token_for_client(
-            resource=settings.destiny_repository_application_url
-        )
-
-        token = result["access_token"]
-
-    with httpx.Client() as client:
-        client.post(
-            str(settings.destiny_repository_url),
-            headers={"Authorization": f"Bearer {token}"},
-            json=robot_result.model_dump(mode="json"),
-        )
+    destiny_sdk.client_auth.send_robot_result(
+        auth_method=destiny_repo_auth(),
+        url=settings.destiny_repository_url,
+        robot_result=robot_result,
+    )
 
 
 @app.post(
