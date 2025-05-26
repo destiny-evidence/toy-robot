@@ -51,6 +51,7 @@ def build_toy_enhancement(
 ) -> destiny_sdk.robots.RobotResult:
     """Build the request body for creating an enhancement."""
     toy = random.choice(TOYS)  # noqa: S311
+    score = round(random.randint(0, 100) / 100)  # noqa: S311
 
     enhancement = destiny_sdk.enhancements.Enhancement(
         reference_id=request.reference.id,
@@ -60,8 +61,8 @@ def build_toy_enhancement(
         content_version=f"{uuid.uuid4()}",
         content=destiny_sdk.enhancements.AnnotationEnhancement(
             annotations=[
-                destiny_sdk.enhancements.Annotation(
-                    annotation_type="example:toy", label="toy", data={"toy": toy}
+                destiny_sdk.enhancements.ScoreAnnotation(
+                    scheme="example:toy", label="toy", score=score, data={"toy": toy}
                 )
             ]
         ),
