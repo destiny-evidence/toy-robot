@@ -18,7 +18,7 @@ class AuthScopes(StrEnum):
 def auth_strategy_robot() -> destiny_sdk.auth.AuthMethod:
     """Select the authentication strategy to use on the robot's API endpoints."""
     # If we're running in the local environment, disable endpoint authentication.
-    if settings.env == Environment.LOCAL:
+    if settings.env in (Environment.LOCAL, Environment.TEST):
         return destiny_sdk.auth.SuccessAuth()
 
     return destiny_sdk.auth.AzureJwtAuth(
@@ -34,7 +34,7 @@ toy_collector_auth = destiny_sdk.auth.CachingStrategyAuth(selector=auth_strategy
 def destiny_repo_auth() -> destiny_sdk.client_auth.ClientAuthenticationMethod:
     """Select the authentication strategy to use comminicating with destiny repo."""
     # If we're running in the local environment, use an access token directly.
-    if settings.env == Environment.LOCAL:
+    if settings.env in (Environment.LOCAL, Environment.TEST):
         return destiny_sdk.client_auth.AccessTokenAuthentication(
             access_token=settings.access_token
         )
