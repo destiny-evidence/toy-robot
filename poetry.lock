@@ -362,8 +362,8 @@ python-jose = "^3.4.0"
 [package.source]
 type = "git"
 url = "ssh://git@github.com/destiny-evidence/destiny-repository.git"
-reference = "main"
-resolved_reference = "4167f0fe03ab4096e20a03fe411c84342ed010dd"
+reference = "75-implement-batches-of-enhancement-requests-as-tasks"
+resolved_reference = "f818619d719d0d15ead14cdfb62bdf3c70d90ab9"
 subdirectory = "libs/sdk"
 
 [[package]]
@@ -1734,4 +1734,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "fcd7ead662a0e9e65c5687e2bc6e2480d9f7bea0738dd7f20a7f666f663fbca9"
+content-hash = "35daf880af6fc6b933cedb07b8a6926ecc74eab16b7c9cc03c0359b4eca52ce4"
