@@ -363,7 +363,6 @@ python-jose = "^3.4.0"
 type = "git"
 url = "ssh://git@github.com/destiny-evidence/destiny-repository.git"
 reference = "75-implement-batches-of-enhancement-requests-as-tasks"
-resolved_reference = "f818619d719d0d15ead14cdfb62bdf3c70d90ab9"
 subdirectory = "libs/sdk"
 
 [[package]]
