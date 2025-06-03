@@ -3,7 +3,7 @@
 from enum import StrEnum
 from functools import lru_cache
 
-from pydantic import Field, HttpUrl
+from pydantic import UUID4, Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -31,24 +31,13 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    access_token: str | None = Field(
+    robot_secret: str | None = Field(
         default=None,
-        description="Token needed if in dev environment and authing against Azure.",
+        description="Secret needed for communicating with destiny repo.",
     )
-    azure_client_id: str | None = Field(
+    robot_id: UUID4 | None = Field(
         default=None,
-        description="Client id for the toy robot application registration.",
-    )
-    azure_application_id: str = Field(
-        description="Id of the application registration for toy robot"
-    )
-    azure_tenant_id: str = Field(
-        description="Id of the tenant that the toy robot is deployed in."
-    )
-    destiny_repository_application_url: str | None = Field(
-        default=None,
-        pattern="api://*",
-        description="Application url for destiny repository.",
+        description="Client id needed for communicating with destiny repository.",
     )
     destiny_repository_url: HttpUrl
 

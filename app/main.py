@@ -9,7 +9,7 @@ import destiny_sdk
 import httpx
 from fastapi import BackgroundTasks, Depends, FastAPI, Response, status
 
-from app.auth import destiny_repo_auth, toy_collector_auth
+from app.auth import toy_collector_auth
 from app.config import get_settings
 
 settings = get_settings()
@@ -18,8 +18,9 @@ TITLE: Final[str] = "Toy Robot"
 app = FastAPI(title=TITLE)
 
 client = destiny_sdk.client.Client(
-    base_url=str(settings.destiny_repository_url),
-    auth_method=destiny_repo_auth(),
+    base_url=settings.destiny_repository_url,
+    client_id=settings.robot_id,
+    secret_key=settings.robot_secret,
 )
 
 
