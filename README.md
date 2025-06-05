@@ -14,7 +14,7 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 ### Installing Dependencies
 
-We install the desitny_sdk directly from github, so you will need to have a github ssh key set up to be able to run poetry install.
+We install the destiny_sdk directly from github, so you will need to have a github ssh key set up to be able to run poetry install.
 
 Once Poetry is installed, install dependencies:
 

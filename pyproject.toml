@@ -21,6 +21,7 @@ destiny-sdk = {git = "ssh://git@github.com:destiny-evidence/destiny-repository.g
 fastapi = {extras = ["standard"], version = "^0.115.6"}
 pydantic-settings = "^2.7.1"
 python = "^3.12"
+msal = "^1.32.3"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.0.1"
