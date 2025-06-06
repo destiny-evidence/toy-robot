@@ -82,3 +82,5 @@ Then you can update the container app image with the following command
 ```sh
 az containerapp update -n toy-robot-stag-app -g rg-toy-robot-staging --image destinyevidenceregistry.azurecr.io/toy-robot:latest
 ```
+
+A
