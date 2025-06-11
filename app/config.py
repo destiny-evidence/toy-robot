@@ -41,7 +41,10 @@ class Settings(BaseSettings):
     )
     destiny_repository_url: HttpUrl
 
-    env: Environment = Environment.STAGING
+    env: Environment = Field(
+        default=Environment.STAGING,
+        description="The environment the toy robot is deployed in.",
+    )
 
 
 @lru_cache(maxsize=1)
