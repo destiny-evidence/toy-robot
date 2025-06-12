@@ -38,6 +38,21 @@ module "container_app_toy_robot" {
       name  = "DESTINY_REPOSITORY_URL"
       value = var.destiny_repository_url
     },
+    {
+      name  = "ROBOT_ID"
+      value = var.robot_id
+    },
+    {
+      name        = "ROBOT_SECRET"
+      secret_name = "robot-secret"
+    }
+  ]
+
+  secrets = [
+    {
+      name  = "robot-secret",
+      value = var.robot_secret
+    }
   ]
 
   # Ingress changes will be ignored to avoid messing up manual custom domain config.
