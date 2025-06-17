@@ -82,22 +82,12 @@ def generate_toy_enhancement(
     )
 
 
-def build_toy_enhancement(
-    request: destiny_sdk.robots.RobotRequest,
-) -> destiny_sdk.robots.RobotResult:
-    """Build the request body for creating an enhancement."""
-    return destiny_sdk.robots.RobotResult(
-        request_id=request.id,
-        enhancement=generate_toy_enhancement(request.reference.id),
-    )
-
-
 def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
     """Create a toy enhancement."""
-    robot_result = build_toy_enhancement(request)
+    enhancement = generate_toy_enhancement(request.reference.id)
 
     client.send_robot_result(
-        robot_result=robot_result,
+        destiny_sdk.robots.RobotResult(request_id=request.id, enhancement=enhancement)
     )
 
 
