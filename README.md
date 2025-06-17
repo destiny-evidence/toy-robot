@@ -50,9 +50,15 @@ poetry run fastapi dev --port 8001
 
 ## Authentication Against Destiny Repository
 
-- If you are running the toy robot with a local instance of destiny repository that is not enforcing authentication, set `ACCESS_TOKEN` in `.env` to a nonsense string
-- If you are running a local robot against an instance of destiny repository deployed in Azure you will need to generate your own access token for destiny repository. Use this to set `ACCESS_TOKEN` in `.env`
-- When the Toy robot is deployed as an Azure container app, it authenticates against destiny repository with a managed identity, which is set up in `infra/main.tf`. This makes use of the `AZURE_APPLICATION_URL` and the `AZURE_CLIENT_ID` environment variables. It's not possible to test the managed identity authentication locally.
+Authentication between the Toy Robot and Destiny Repository uses HMAC authentication, where a request signature is encrypted with the robot's secret key and set as a header. To simplify this process, the destiny_sdk provides both a client for communicating with destiny repository that handles adding signatures, and a service auth that can be used to validate incoming requests.
+
+In Toy Robot the client is inititalised in [main.py](app/main.py) and used for sending requests, the service auth is initialised in [auth.py](app/auth.py) and then used as a dependency on the app endpoints in [main.py](app/main.py)
+
+### Configuring Authentication
+
+- If you are running the toy robot with a local instance of destiny repository that is not enforcing authentication, add `ENV=local` to your `.env` file. This will cause the toy-robot to bypass authentication. This is to allow easy development only and the robot should not be deployed with `env=local`.
+  - In this case you will need to set dummy values for the `ROBOT_ID` and the `ROBOT_SECRET`. For example `ROBOT_ID="9fa8b9bd-12b1-4450-affb-712face23390"` and `ROBOT_SECRET="dummy_secret"`
+- If you want to deploy the Toy Robot and use it with destiny repository, the robot will need to be registered with that deployment of destiny repository. The registration process will provide the robot_id and client_secret needed to configure authentication. You can check out the proceedure for registering a robot [here](https://destiny-evidence.github.io/destiny-repository/procedures/robot-registration.html).
 
 ## Container Image
 
