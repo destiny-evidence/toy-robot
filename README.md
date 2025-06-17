@@ -48,6 +48,44 @@ Run the development server:
 poetry run fastapi dev --port 8001
 ```
 
+## Implemented request flows
+
+### Single Enhancement Request Flow
+
+```mermaid
+    sequenceDiagram
+        participant Destiny Repository
+        participant Robot
+        Destiny Repository->>+Robot: POST /<robot_base_url>/single/ : destiny_sdk.robots.RobotRequest
+        Robot->>Robot: Create enhancement background job
+        Robot->>Destiny Repository: Response: 202 Accepted or Failure Status Code
+        alt Background Job Success
+            Robot->>Destiny Repository: POST /robot/enhancement/single/ : destiny_sdk.robots.RobotResult(request_id, enhancement)
+        else Failure
+            Robot->>-Destiny Repository: POST /robot/enhancement/single/ : destiny_sdk.robots.RobotResult(request_id, RobotError)
+        end
+```
+
+### Batch Enhancement Request Flow
+
+```mermaid
+    sequenceDiagram
+        participant Destiny Repository
+        participant Robot
+        participant Blob Storage
+        Destiny Repository->>+Robot: POST /<robot_base_url>/batch/ : destiny_sdk.robots.BatchRobotRequest
+        Robot->>Robot: Create batch enhancement background job
+        Robot->>Destiny Repository: Response: 202 Accepted or Failure Status Code
+        Robot->>Blob Storage: Download reference file provided in BatchRobotRequest
+        Robot->>Robot: Process batch
+        alt Background Job Success
+            Robot->>Blob Storage: Upload created enhancements
+            Robot->>Destiny Repository: POST /robot/enhancement/batch/ : destiny_sdk.robots.BatchRobotResult(request_id, url_storage)
+        else Failure
+            Robot->>-Destiny Repository: POST /robot/enhancement/batch/ : destiny_sdk.robots.BatchRobotResult(request_id, RobotError)
+        end
+```
+
 ## Authentication Against Destiny Repository
 
 Authentication between the Toy Robot and Destiny Repository uses HMAC authentication, where a request signature is encrypted with the robot's secret key and set as a header. To simplify this process, the destiny_sdk provides both a client for communicating with destiny repository that handles adding signatures, and a service auth that can be used to validate incoming requests.
