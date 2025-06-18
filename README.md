@@ -121,6 +121,12 @@ az acr login --name destinyevidenceregistry
 docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
 ```
 
+Then you can deploy your image to the container app
+
+```sh
+az containerapp update az containerapp update -n toy-robot-stag-app -g rg-toy-robot-staging --image estinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
+```
+
 Then you can restart the revision with the following command
 
 ```sh
