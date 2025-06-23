@@ -103,7 +103,7 @@ In Toy Robot the client is inititalised in [main.py](app/main.py) and used for s
 When building the docker image
 
 ```sh
-docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --tag toy-robot .
+docker buildx build --tag toy-robot .
 ```
 
 This [mounts your github ssh key](https://docs.docker.com/reference/dockerfile/#example-access-to-gitlab) in the builder step so that poetry can install destiny_sdk from github.
@@ -116,7 +116,7 @@ If you want to deploy the toy robot into Azure using the provided terraform infr
 
 ```sh
 az login
-docker buildx build --no-cache --ssh default=$SSH_AUTH_SOCK --platform linux/amd64 --tag destinyevidenceregistry.azurecr.io/toy-robot .
+docker buildx build --platform linux/amd64 --tag destinyevidenceregistry.azurecr.io/toy-robot:[YOUR_TAG] .
 az acr login --name destinyevidenceregistry
 docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
 ```
@@ -124,7 +124,7 @@ docker push destinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
 Then you can deploy your image to the container app
 
 ```sh
-az containerapp update az containerapp update -n toy-robot-stag-app -g rg-toy-robot-staging --image estinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
+az containerapp update -n toy-robot-stag-app -g rg-toy-robot-staging --image estinyevidenceregistry.azurecr.io/toy-robot:YOUR_TAG
 ```
 
 Then you can restart the revision with the following command
