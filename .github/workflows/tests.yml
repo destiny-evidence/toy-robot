@@ -1,0 +1,54 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - "**.md"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.12"
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          virtualenvs-path: .venv
+          installer-parallel: true
+
+      - name: Load cached virtual environment
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies if cache was not found
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction
+
+      - name: Run test with pytest via poetry
+        env:
+          DESTINY_REPOSITORY_URL: "http://repository:8000" # Just a dummy, won't be used.
+          ROBOT_ID: "1ee5aa1f-3248-4d21-9fee-718d4ff0ba5f" # Just a dummy, won't be used.
+          ROBOT_SECRET: "secret-secret-secret" # Just a dummy, won't be used
+          ENV: test
+        run: poetry run pytest
