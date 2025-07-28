@@ -16,8 +16,13 @@ package-mode = false
 readme = "README.md"
 version = "0.1.0"
 
+[[tool.poetry.source]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+priority = "explicit"
+
 [tool.poetry.dependencies]
-destiny-sdk = "^0.1.0"
+destiny-sdk = {version="^0.2.0", source="testpypi"}
 fastapi = {extras = ["standard"], version = "^0.115.6"}
 pydantic-settings = "^2.7.1"
 pytest-env = "^1.1.5"
