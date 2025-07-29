@@ -100,14 +100,14 @@ markers = {main = "sys_platform == \"win32\" or platform_system == \"Windows\"",
 
 [[package]]
 name = "destiny-sdk"
-version = "0.2.0"
+version = "0.2.0a0"
 description = "A software development kit (sdk) to support interaction with the DESTINY repository"
 optional = false
 python-versions = ">=3.12,<4.0"
 groups = ["main"]
 files = [
-    {file = "destiny_sdk-0.2.0-py3-none-any.whl", hash = "sha256:c100efabe29701fabcabcd702f82354c0ea24d28c35a4b74976041caf1011aca"},
-    {file = "destiny_sdk-0.2.0.tar.gz", hash = "sha256:d410bba47285087e8b7dc281e29b3dff48d52d19ab798e4cb440b065483148a3"},
+    {file = "destiny_sdk-0.2.0a0-py3-none-any.whl", hash = "sha256:4fb7df8d54efc0094aadc066c6a5012f8ae734f0e0fa26eafed94c2cb5d78ae6"},
+    {file = "destiny_sdk-0.2.0a0.tar.gz", hash = "sha256:6622f9807160f04f6ad18408e8c2950ac29a69137baa73fcef2be70c44fafe33"},
 ]
 
 [package.dependencies]
@@ -1472,4 +1472,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "65fec37256c454606d76ded99c1d63654eed4704c3ce23322fdd7ea04678e039"
+content-hash = "c89a8afbcddfcde7885c0b116b7902ea657e1963f321876530f76a5ebb6d281a"
