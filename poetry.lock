@@ -96,18 +96,18 @@ files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-markers = {main = "sys_platform == \"win32\" or platform_system == \"Windows\"", dev = "sys_platform == \"win32\""}
+markers = {main = "platform_system == \"Windows\" or sys_platform == \"win32\"", dev = "sys_platform == \"win32\""}
 
 [[package]]
 name = "destiny-sdk"
-version = "0.2.0a0"
+version = "0.2.0"
 description = "A software development kit (sdk) to support interaction with the DESTINY repository"
 optional = false
-python-versions = ">=3.12,<4.0"
+python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "destiny_sdk-0.2.0a0-py3-none-any.whl", hash = "sha256:4fb7df8d54efc0094aadc066c6a5012f8ae734f0e0fa26eafed94c2cb5d78ae6"},
-    {file = "destiny_sdk-0.2.0a0.tar.gz", hash = "sha256:6622f9807160f04f6ad18408e8c2950ac29a69137baa73fcef2be70c44fafe33"},
+    {file = "destiny_sdk-0.2.0-py3-none-any.whl", hash = "sha256:2749f13d7fcc52e60bb1ab9fbad53cfb1a3de8781c3ac6bc575dc918e1ef722d"},
+    {file = "destiny_sdk-0.2.0.tar.gz", hash = "sha256:d1345b1f6490ec29208bd54b13eee5b5122ac18b6286d3fc47c359c0408d3e39"},
 ]
 
 [package.dependencies]
@@ -119,11 +119,6 @@ pytest = ">=8.4.0,<9.0.0"
 pytest-asyncio = ">=1.0.0,<2.0.0"
 pytest-httpx = ">=0.35.0,<0.36.0"
 python-jose = ">=3.4.0,<4.0.0"
-
-[package.source]
-type = "legacy"
-url = "https://test.pypi.org/simple"
-reference = "testpypi"
 
 [[package]]
 name = "distlib"
@@ -1472,4 +1467,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "c89a8afbcddfcde7885c0b116b7902ea657e1963f321876530f76a5ebb6d281a"
+content-hash = "23c1c8a4dac58ba70b6f7e89809c5b2de8aa4fb3e605cf3593a438dd03942d95"
