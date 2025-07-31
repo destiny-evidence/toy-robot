@@ -30,3 +30,27 @@ variable "environment" {
   description = "Environment for the toy robot, should be either development or staging."
   default     = "staging"
 }
+
+
+# Config variables for github actions
+# These may not be necessary for your case
+variable "github_repo" {
+  description = "The github repository of the toy-robot"
+  default     = "destiny-evidence/toy-robot"
+}
+
+variable "github_app_id" {
+  description = "The app id for GitHub app used to configure github"
+  type        = string
+}
+
+variable "github_app_installation_id" {
+  description = "The app installation ID for the GitHub App used to configure github"
+  type        = string
+}
+
+variable "github_app_pem" {
+  description = "The app pem file for authenticating as a GitHub App"
+  type        = string
+  sensitive   = true
+}
