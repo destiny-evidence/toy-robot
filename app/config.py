@@ -1,7 +1,9 @@
 """API config parsing and model."""
 
+import tomllib
 from enum import StrEnum
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import UUID4, Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,6 +28,19 @@ class Environment(StrEnum):
     TEST = "test"
 
 
+def read_version_from_toml(path_to_toml: str) -> str:
+    """Read the robot version from the pyproject.toml."""
+    with Path.open(Path(path_to_toml), "rb") as toml_file:
+        toml = tomllib.load(toml_file)
+        if not (project := toml.get("project", None)):
+            msg = f"Project section not present in {path_to_toml}"
+            raise ValueError(msg)
+        if not (version := project.get("version", None)):
+            msg = f"Robot version not present in {path_to_toml}"
+            raise ValueError(msg)
+        return version
+
+
 class Settings(BaseSettings):
     """Settings model for API."""
 
@@ -39,6 +54,13 @@ class Settings(BaseSettings):
         default=None,
         description="Client id needed for communicating with destiny repository.",
     )
+
+    robot_version: str = Field(
+        default=read_version_from_toml("pyproject.toml"),
+        pattern="[0-9]+.[0-9]+.[0-9]+",
+        description="Semantic version of the robot",
+    )
+
     destiny_repository_url: HttpUrl
 
     env: Environment = Field(

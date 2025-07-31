@@ -6,20 +6,24 @@ An example robot producing toy enhancements against destiny repository.
 
 ### Requirements
 
-[Poetry](https://python-poetry.org) is used for dependency management and managing virtual environments. You can install poetry either using pipx or the poetry installer script:
+[uv](https://docs.astral.sh/uv) is used for dependency management and managing virtual environments. You can install uv either using pipx or the uv installer script:
 
 ```sh
-curl -sSL https://install.python-poetry.org | python3 -
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 ### Installing Dependencies
 
-We install the destiny_sdk directly from github, so you will need to have a github ssh key set up to be able to run poetry install.
-
-Once Poetry is installed, install dependencies:
+Once uv is installed, install dependencies:
 
 ```sh
-poetry install
+uv sync
+```
+
+### Activate your environment
+
+```sh
+source .venv/bin/activate
 ```
 
 ## Development
@@ -29,13 +33,13 @@ Before commiting any changes, please run the pre-commit hooks. This will ensure 
 Install the pre-commit hooks:
 
 ```sh
-poetry run pre-commit install
+uv run pre-commit install
 ```
 
 pre-commit hooks will run automatically when you commit changes. To run them manually, use:
 
 ```sh
-poetry run pre-commit run --all-files
+uv run pre-commit run --all-files
 ```
 
 See [.pre-commit-config.yaml](.pre-commit-config.yaml) for the list of pre-commit hooks and their configuration.
@@ -45,7 +49,7 @@ See [.pre-commit-config.yaml](.pre-commit-config.yaml) for the list of pre-commi
 Run the development server:
 
 ```sh
-poetry run fastapi dev --port 8001
+uv run fastapi dev --port 8001
 ```
 
 ## Implemented request flows
@@ -106,9 +110,11 @@ When building the docker image
 docker buildx build --tag toy-robot .
 ```
 
-This [mounts your github ssh key](https://docs.docker.com/reference/dockerfile/#example-access-to-gitlab) in the builder step so that poetry can install destiny_sdk from github.
+Run the docker container
 
-If you run into trouble you might need to start the ssh agent.
+```sh
+docker run -p 8001:8001 toy-robot
+```
 
 ### Manual push
 
