@@ -22,7 +22,7 @@ description = "Example robot for producing toy enhancements against destiny repo
 name = "toy-robot"
 readme = "README.md"
 requires-python = "~=3.13"
-version = "0.1.0"
+version = "0.2.0"
 
 [tool.mypy]
 explicit_package_bases = true

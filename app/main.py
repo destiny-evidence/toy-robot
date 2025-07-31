@@ -66,7 +66,7 @@ def generate_toy_enhancement(
         reference_id=reference_id,
         source=TITLE,
         visibility=destiny_sdk.visibility.Visibility.PUBLIC,
-        robot_version="0.1.0",
+        robot_version=settings.robot_version,
         content_version=f"{uuid.uuid4()}",
         content=destiny_sdk.enhancements.AnnotationEnhancement(
             annotations=[
