@@ -30,3 +30,13 @@ variable "environment" {
   description = "Environment for the toy robot, should be either development or staging."
   default     = "staging"
 }
+
+variable "honeycomb_endpoint" {
+  description = "The Honeycomb API endpoint."
+  default     = "https://api.honeycomb.io:443"
+}
+
+variable "honeycomb_api_key" {
+  description = "The Honeycomb API key."
+  sensitive   = true
+}
