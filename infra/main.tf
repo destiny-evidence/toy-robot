@@ -45,6 +45,34 @@ module "container_app_toy_robot" {
     {
       name        = "ROBOT_SECRET"
       secret_name = "robot-secret"
+    },
+    {
+      name  = "OTEL_SERVICE_NAME",
+      value = "${var.robot_name}-${var.environment}"
+    },
+    {
+      name  = "OTEL_TRACES_EXPORTER",
+      value = "otlp"
+    },
+    {
+      name  = "OTEL_LOGS_EXPORTER",
+      value = "otlp"
+    },
+    {
+      name  = "OTEL_EXPORTER_OTLP_PROTOCOL",
+      value = "http/protobuf"
+    },
+    {
+      name  = "OTEL_EXPORTER_OTLP_ENDPOINT",
+      value = var.honeycomb_endpoint
+    },
+    {
+      name        = "OTEL_EXPORTER_OTLP_HEADERS",
+      secret_name = "honeycomb-api-header"
+    },
+    {
+      name  = "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED",
+      value = "true"
     }
   ]
 
@@ -52,6 +80,10 @@ module "container_app_toy_robot" {
     {
       name  = "robot-secret",
       value = var.robot_secret
+    },
+    {
+      name  = "honeycomb-api-header",
+      value = "x-honeycomb-team=${var.honeycomb_api_key}"
     }
   ]
 

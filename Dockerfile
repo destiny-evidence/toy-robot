@@ -27,4 +27,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENTRYPOINT []
 
 EXPOSE 8001
-CMD ["fastapi",  "run", "app/main.py", "--port", "8001"]
+CMD ["opentelemetry-instrument", "fastapi",  "run", "app/main.py", "--port", "8001"]
