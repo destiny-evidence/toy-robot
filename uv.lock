@@ -105,7 +105,7 @@ wheels = [
 
 [[package]]
 name = "destiny-sdk"
-version = "0.2.0.post0"
+version = "0.3.0a0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
@@ -117,9 +117,9 @@ dependencies = [
     { name = "pytest-httpx" },
     { name = "python-jose" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f3/73/87ffcb8e60aa39cb52010a97cd8ddfbab55c80d502c1208ebd9e4d43afe7/destiny_sdk-0.2.0.post0.tar.gz", hash = "sha256:27354f6d6f0ee789a13a15f5c86a333165aceef04efee86cc50d4e5b93a2a4b1", size = 17445, upload-time = "2025-07-30T04:00:37.534Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/08/7415c94758bb8d72831fa320e89779a12e9567b61397506f0a797e494d92/destiny_sdk-0.3.0a0.tar.gz", hash = "sha256:dfed4a6fcc76f6aca1c191910fedb2f90dabf72b921a4b835ad794997f6e1a0e", size = 47817, upload-time = "2025-08-27T02:41:55.514Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/e1/8cc72fad671d78ac7fee206f9fb3aa77e4a18062b0342aa2c7ba6cacb54f/destiny_sdk-0.2.0.post0-py3-none-any.whl", hash = "sha256:619f690e29ffb114ce89bec394f7d3c67a36a263cadd46c1106affffe86af7a0", size = 21199, upload-time = "2025-07-30T04:00:36.665Z" },
+    { url = "https://files.pythonhosted.org/packages/9e/af/6ab1ade4a51289c837e2d9544da1f2b3554183a2615a721a16147c6aba4f/destiny_sdk-0.3.0a0-py3-none-any.whl", hash = "sha256:07af63c96b5aad4c04d73c6a73c0a41dd8a2f290f913f37a49cd8531a64b646f", size = 22839, upload-time = "2025-08-27T02:41:54.483Z" },
 ]
 
 [[package]]
@@ -985,7 +985,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "destiny-sdk", specifier = ">=0.2.0,<0.3" },
+    { name = "destiny-sdk", specifier = ">=0.3.0a0,<0.4.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.6,<0.116" },
     { name = "opentelemetry-distro", specifier = ">=0.57b0" },
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.36.0" },
