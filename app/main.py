@@ -82,17 +82,8 @@ def generate_toy_enhancement(
     )
 
 
-def create_toy_enhancement(request: destiny_sdk.robots.RobotRequest) -> None:
-    """Create a toy enhancement."""
-    enhancement = generate_toy_enhancement(request.reference.id)
-
-    client.send_robot_result(
-        destiny_sdk.robots.RobotResult(request_id=request.id, enhancement=enhancement)
-    )
-
-
-def create_batch_toy_enhancement(request: destiny_sdk.robots.BatchRobotRequest) -> None:
-    """Create a batch of toy enhancements with efficient memory usage."""
+def create_toy_enhancements(request: destiny_sdk.robots.RobotRequest) -> None:
+    """Create toy enhancements with efficient memory usage."""
     file_content = b""
     with (
         httpx.Client() as httpx_client,
@@ -116,25 +107,11 @@ def create_batch_toy_enhancement(request: destiny_sdk.robots.BatchRobotRequest) 
         )
         response.raise_for_status()
 
-    client.send_batch_robot_result(
-        destiny_sdk.robots.BatchRobotResult(
+    client.send_robot_result(
+        destiny_sdk.robots.RobotResult(
             request_id=request.id, storage_url=request.result_storage_url
         )
     )
-
-
-@app.post(
-    "/toy/enhancement/single/",
-    status_code=status.HTTP_202_ACCEPTED,
-    dependencies=[Depends(toy_collector_auth)],
-)
-def request_toy_enhancement(
-    request: destiny_sdk.robots.RobotRequest, background_tasks: BackgroundTasks
-) -> Response:
-    """Receive a request to create a toy enhancement."""
-    background_tasks.add_task(create_toy_enhancement, request)
-
-    return Response(status_code=status.HTTP_202_ACCEPTED)
 
 
 @app.post(
@@ -142,10 +119,10 @@ def request_toy_enhancement(
     status_code=status.HTTP_202_ACCEPTED,
     dependencies=[Depends(toy_collector_auth)],
 )
-def request_batch_toy_enhancement(
-    request: destiny_sdk.robots.BatchRobotRequest, background_tasks: BackgroundTasks
+def request_toy_enhancements(
+    request: destiny_sdk.robots.RobotRequest, background_tasks: BackgroundTasks
 ) -> Response:
     """Receive a request to create a lot of toy enhancements."""
-    background_tasks.add_task(create_batch_toy_enhancement, request)
+    background_tasks.add_task(create_toy_enhancements, request)
 
     return Response(status_code=status.HTTP_202_ACCEPTED)
