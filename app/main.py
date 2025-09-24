@@ -1,40 +1,36 @@
 """Main module for the Toy Robot."""
 
+import asyncio
+import contextlib
+import logging
 import random
+import signal
+import sys
 import uuid
+from types import FrameType
 from typing import Final
 from uuid import UUID
 
 import destiny_sdk
 import httpx
-from fastapi import BackgroundTasks, Depends, FastAPI, Response, status
 
-from app.auth import toy_collector_auth
 from app.config import get_settings
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
 TITLE: Final[str] = "Toy Robot"
-app = FastAPI(title=TITLE)
 
 client = destiny_sdk.client.Client(
     base_url=settings.destiny_repository_url,
     client_id=settings.robot_id,
     secret_key=settings.robot_secret,
 )
-
-
-@app.get("/")
-async def root() -> dict[str, str]:
-    """
-    Root endpoint for the API.
-
-    Returns:
-        dict[str, str]: A simple message.
-
-    """
-    return {"message": "I am a Toy Robot"}
-
 
 TOYS = [
     "Woody",
@@ -82,47 +78,124 @@ def generate_toy_enhancement(
     )
 
 
-def create_toy_enhancements(request: destiny_sdk.robots.RobotRequest) -> None:
-    """Create toy enhancements with efficient memory usage."""
-    file_content = b""
-    with (
-        httpx.Client() as httpx_client,
-        httpx_client.stream("GET", str(request.reference_storage_url)) as response,
-    ):
-        response.raise_for_status()
-        for entry in response.iter_lines():
-            reference = destiny_sdk.references.Reference.model_validate_json(entry)
-            enhancement = generate_toy_enhancement(reference.id)
-            file_content += (enhancement.to_jsonl() + "\n").encode("utf-8")
+async def process_robot_enhancement_batch(
+    batch: destiny_sdk.robots.RobotEnhancementBatch,
+) -> None:
+    """Process a single robot enhancement batch by creating toy enhancements."""
+    logger.info("Processing robot enhancement batch %s", batch.id)
 
-    with httpx.Client() as httpx_client:
-        response = httpx_client.put(
-            str(request.result_storage_url),
-            content=file_content,
-            headers={
-                "Content-Type": "application/jsonl",
-                "x-ms-blob-type": "BlockBlob",
-                "Content-Length": str(len(file_content)),
-            },
+    try:
+        file_content = b""
+        async with (
+            httpx.AsyncClient() as httpx_client,
+            httpx_client.stream("GET", str(batch.reference_storage_url)) as response,
+        ):
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                reference = destiny_sdk.references.Reference.model_validate_json(line)
+                enhancement = generate_toy_enhancement(reference.id)
+                file_content += (enhancement.to_jsonl() + "\n").encode("utf-8")
+
+        # Upload the results
+        async with httpx.AsyncClient() as httpx_client:
+            response = await httpx_client.put(
+                str(batch.result_storage_url),
+                content=file_content,
+                headers={
+                    "Content-Type": "application/jsonl",
+                    "x-ms-blob-type": "BlockBlob",
+                    "Content-Length": str(len(file_content)),
+                },
+            )
+            response.raise_for_status()
+
+        client.send_robot_enhancement_batch_result(
+            destiny_sdk.robots.RobotEnhancementBatchResult(request_id=batch.id)
         )
-        response.raise_for_status()
 
-    client.send_robot_result(
-        destiny_sdk.robots.RobotResult(
-            request_id=request.id, storage_url=request.result_storage_url
+        logger.info("Successfully processed robot enhancement batch %s", batch.id)
+
+    except Exception as e:
+        logger.exception("Error processing robot enhancement batch %s", batch.id)
+
+        client.send_robot_enhancement_batch_result(
+            destiny_sdk.robots.RobotEnhancementBatchResult(
+                request_id=batch.id,
+                error=destiny_sdk.robots.RobotError(
+                    message=f"Failed to process request: {e!s}"
+                ),
+            )
         )
-    )
+        raise
 
 
-@app.post(
-    "/toy/enhancement/batch/",
-    status_code=status.HTTP_202_ACCEPTED,
-    dependencies=[Depends(toy_collector_auth)],
-)
-def request_toy_enhancements(
-    request: destiny_sdk.robots.RobotRequest, background_tasks: BackgroundTasks
-) -> Response:
-    """Receive a request to create a lot of toy enhancements."""
-    background_tasks.add_task(create_toy_enhancements, request)
+async def poll_for_batches() -> None:
+    """Poll for new robot enhancement batches and process them."""
+    logger.info("Starting to poll for robot enhancement batches...")
 
-    return Response(status_code=status.HTTP_202_ACCEPTED)
+    while True:
+        try:
+            batch = client.poll_robot_enhancement_batch(
+                robot_id=settings.robot_id, limit=settings.batch_size
+            )
+
+            if batch is None:
+                logger.debug("No batches available")
+                await asyncio.sleep(settings.poll_interval_seconds)
+                continue
+
+            logger.info("Found batch %s to process", batch.id)
+
+            try:
+                await process_robot_enhancement_batch(batch)
+            except Exception:
+                logger.exception("Error processing batch %s", batch.id)
+
+        except Exception:
+            logger.exception("Error during polling")
+
+        await asyncio.sleep(settings.poll_interval_seconds)
+
+
+shutdown_event = asyncio.Event()
+
+
+def signal_handler(signum: int, _frame: FrameType | None) -> None:
+    """Handle shutdown signals gracefully."""
+    logger.info("Received signal %s, initiating graceful shutdown...", signum)
+    shutdown_event.set()
+
+
+async def main() -> None:
+    """Run the polling robot."""
+    logger.info("Starting %s polling loop", TITLE)
+    logger.info("Polling interval: %d seconds", settings.poll_interval_seconds)
+    logger.info("Batch size: %d", settings.batch_size)
+
+    # Register signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    try:
+        poll_task = asyncio.create_task(poll_for_batches())
+
+        # Wait for either the polling task to complete or shutdown signal
+        done, pending = await asyncio.wait(
+            [poll_task, asyncio.create_task(shutdown_event.wait())],
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+
+        # Cancel remaining tasks
+        for task in pending:
+            task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await task
+
+        logger.info("Shutdown complete")
+
+    except KeyboardInterrupt:
+        logger.info("Received keyboard interrupt, shutting down...")
+        sys.exit(0)
+    except Exception:
+        logger.exception("Fatal error occurred")
+        sys.exit(1)

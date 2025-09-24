@@ -44,12 +44,28 @@ uv run pre-commit run --all-files
 
 See [.pre-commit-config.yaml](.pre-commit-config.yaml) for the list of pre-commit hooks and their configuration.
 
-## Application
+### Configuration
 
-Run the development server:
+Copy the example `.env.example` file:
 
 ```sh
-uv run fastapi dev --port 8001
+cp .env.example .env
+```
+
+The robot can be configured using environment variables:
+
+- `DESTINY_REPOSITORY_URL`: URL of the destiny repository to poll
+- `ROBOT_ID`: The robot's client ID for authentication
+- `ROBOT_SECRET`: The robot's secret key for HMAC authentication
+- `POLL_INTERVAL_SECONDS`: How often to poll for new batches (default: 30)
+- `BATCH_SIZE`: The number of references to include per enhancement batch (default: 5)
+
+## Application
+
+Run the robot:
+
+```sh
+uv run python run_robot.py
 ```
 
 ## Implemented request flows
@@ -70,24 +86,36 @@ uv run fastapi dev --port 8001
         end
 ```
 
-### Batch Enhancement Request Flow
+### Robot Enhancement Batch Flow
 
 ```mermaid
     sequenceDiagram
-        participant Destiny Repository
-        participant Robot
+        participant Data Repository
         participant Blob Storage
-        Destiny Repository->>+Robot: POST /<robot_base_url>/batch/ : destiny_sdk.robots.BatchRobotRequest
-        Robot->>Robot: Create batch enhancement background job
-        Robot->>Destiny Repository: Response: 202 Accepted or Failure Status Code
-        Robot->>Blob Storage: Download reference file provided in BatchRobotRequest
-        Robot->>Robot: Process batch
-        alt Background Job Success
-            Robot->>Blob Storage: Upload created enhancements
-            Robot->>Destiny Repository: POST /robot/enhancement/batch/ : destiny_sdk.robots.BatchRobotResult(request_id, url_storage)
-        else Failure
-            Robot->>-Destiny Repository: POST /robot/enhancement/batch/ : destiny_sdk.robots.BatchRobotResult(request_id, RobotError)
+        participant Robot
+        Note over Data Repository: Enhancement request is RECEIVED
+        Robot->>Data Repository: POST /robot-enhancement-batch/ : Poll for batches
+        Data Repository->>Robot: RobotEnhancementBatch (batch of references)
+        Note over Data Repository: Request status: PROCESSING
+        Blob Storage->>Robot: GET reference_storage_url (download references)
+        Robot-->>Robot: Process references and create enhancements
+        alt More batches available
+            Robot->>Data Repository: POST /robot-enhancement-batch/ : Poll for next batch
+            Data Repository->>Robot: RobotEnhancementBatch (next batch)
+            Note over Robot: Process additional batches...
+        else No more batches
+            Robot->>Data Repository: POST /robot-enhancement-batch/ : Poll for batches
+            Data Repository->>Robot: HTTP 204 No Content
         end
+        alt Batch failure
+            Robot->>Data Repository: POST /robot-enhancement-batch/<batch_id>/results/ : RobotEnhancementBatchResult(error)
+        else Batch success
+            Robot->>+Blob Storage: PUT result_storage_url (upload enhancements)
+            Robot->>Data Repository: POST /robot-enhancement-batch/<batch_id>/results/ : RobotEnhancementBatchResult
+        end
+        Note over Robot: Repeat for all batches until HTTP 204
+        Blob Storage->>-Data Repository: Validate and import all enhancements
+        Note over Data Repository: Update request state to IMPORTING → INDEXING → COMPLETED
 ```
 
 ## Authentication Against Destiny Repository
