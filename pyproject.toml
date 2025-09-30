@@ -34,9 +34,6 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 addopts = ["--color=yes", "--import-mode=importlib", "--verbose"]
-env = [
-    "ENV=local",
-]
 pythonpath = "."
 testpaths = ["tests"]
 

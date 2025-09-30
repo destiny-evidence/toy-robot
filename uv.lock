@@ -84,7 +84,7 @@ wheels = [
 
 [[package]]
 name = "destiny-sdk"
-version = "0.4.0"
+version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
@@ -96,9 +96,9 @@ dependencies = [
     { name = "pytest-httpx" },
     { name = "python-jose" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cd/1e/1c36f4e540403b3c8c876a748cf65de2caa768fa44edf43fadad0081c76d/destiny_sdk-0.4.0.tar.gz", hash = "sha256:077c4484a501d54ce35849fba56218165f17e0fc08faa034d36552c44d33d35f", size = 48273, upload-time = "2025-09-30T03:34:52.733Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/48/eb25305c68fcfa214fe0698c46d93cbd2b1aa1f6ae6ea668005cf8ae993d/destiny_sdk-0.4.1.tar.gz", hash = "sha256:78bda151f7b462c2b66ffba94075c006fa1b658e341581eb39972816b8f0bdd6", size = 48274, upload-time = "2025-09-30T06:29:43.942Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/ba/e9ffbf6d796728fed023c01ed1c47899026b5c07d4afca3775a3d7febed3/destiny_sdk-0.4.0-py3-none-any.whl", hash = "sha256:85e170f00f8bc13631ec19db049f12c7664ec52afe1f0a9f08397126671ecc4a", size = 23275, upload-time = "2025-09-30T03:34:51.666Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/0e/2a6cde2b571370814d8aba68059df0773039a7abe724a968ddcd1170ea57/destiny_sdk-0.4.1-py3-none-any.whl", hash = "sha256:5ffb74149c89ffce1defa013f7b7320e24e67c481ec833cd020fecd88a7774ae", size = 23279, upload-time = "2025-09-30T06:29:42.991Z" },
 ]
 
 [[package]]

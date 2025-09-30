@@ -94,24 +94,24 @@ uv run python run_robot.py
         participant Blob Storage
         participant Robot
         Note over Data Repository: Enhancement request is RECEIVED
-        Robot->>Data Repository: POST /robot-enhancement-batch/ : Poll for batches
+        Robot->>Data Repository: POST /robot-enhancement-batches/ : Poll for batches
         Data Repository->>Robot: RobotEnhancementBatch (batch of references)
         Note over Data Repository: Request status: PROCESSING
         Blob Storage->>Robot: GET reference_storage_url (download references)
         Robot-->>Robot: Process references and create enhancements
         alt More batches available
-            Robot->>Data Repository: POST /robot-enhancement-batch/ : Poll for next batch
+            Robot->>Data Repository: POST /robot-enhancement-batches/ : Poll for next batch
             Data Repository->>Robot: RobotEnhancementBatch (next batch)
             Note over Robot: Process additional batches...
         else No more batches
-            Robot->>Data Repository: POST /robot-enhancement-batch/ : Poll for batches
+            Robot->>Data Repository: POST /robot-enhancement-batches/ : Poll for batches
             Data Repository->>Robot: HTTP 204 No Content
         end
         alt Batch failure
-            Robot->>Data Repository: POST /robot-enhancement-batch/<batch_id>/results/ : RobotEnhancementBatchResult(error)
+            Robot->>Data Repository: POST /robot-enhancement-batches/<batch_id>/results/ : RobotEnhancementBatchResult(error)
         else Batch success
             Robot->>+Blob Storage: PUT result_storage_url (upload enhancements)
-            Robot->>Data Repository: POST /robot-enhancement-batch/<batch_id>/results/ : RobotEnhancementBatchResult
+            Robot->>Data Repository: POST /robot-enhancement-batches/<batch_id>/results/ : RobotEnhancementBatchResult
         end
         Note over Robot: Repeat for all batches until HTTP 204
         Blob Storage->>-Data Repository: Validate and import all enhancements
