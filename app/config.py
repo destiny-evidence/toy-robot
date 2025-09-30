@@ -1,5 +1,6 @@
 """API config parsing and model."""
 
+import logging
 import tomllib
 from enum import StrEnum
 from functools import lru_cache
@@ -7,6 +8,14 @@ from pathlib import Path
 
 from pydantic import UUID4, Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def configure_logging() -> None:
+    """Configure logging for the application."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
 
 
 class Environment(StrEnum):

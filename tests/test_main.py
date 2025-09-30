@@ -14,14 +14,16 @@ os.environ.setdefault("ROBOT_SECRET", "test_secret")
 os.environ.setdefault("ROBOT_ID", str(uuid.uuid4()))
 os.environ.setdefault("DESTINY_REPOSITORY_URL", "https://test.example.com")
 
-from app.main import TOYS, generate_toy_enhancement, process_robot_enhancement_batch
+from app.enhancement_processor import TOYS, ToyEnhancementProcessor
+from app.main import process_robot_enhancement_batch
 
 
 def test_generate_toy_enhancement() -> None:
     """Test that toy enhancements are generated with valid toy names."""
+    processor = ToyEnhancementProcessor(robot_version="1.0.0")
     reference_id = uuid.uuid4()
 
-    enhancement = generate_toy_enhancement(reference_id)
+    enhancement = processor.generate_toy_enhancement(reference_id)
 
     assert enhancement.reference_id == reference_id
     assert isinstance(
