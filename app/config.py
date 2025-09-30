@@ -77,18 +77,12 @@ class Settings(BaseSettings):
 
     poll_interval_seconds: int = Field(
         default=30,
-        ge=1,
-        le=3600,
-        description=(
-            "How often to poll for new robot enhancement batches (1-3600 seconds)"
-        ),
+        description=("How often to poll for new robot enhancement batches (seconds)"),
     )
 
     batch_size: int = Field(
-        default=5,
-        ge=1,
-        le=50,
-        description="The number of references to include per enhancement batch",
+        default=2,
+        description=("The number of references to include per enhancement batch"),
     )
 
 
