@@ -26,5 +26,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-EXPOSE 8001
-CMD ["opentelemetry-instrument", "fastapi",  "run", "app/main.py", "--port", "8001"]
+CMD ["opentelemetry-instrument", "python", "run_robot.py"]

@@ -31,8 +31,7 @@ module "container_app_toy_robot" {
   resource_group_name             = azurerm_resource_group.robot_resource_group.name
   region                          = azurerm_resource_group.robot_resource_group.location
 
-  # We're the api url for the destiny repository here, which the toy robot will use to authenticate against.
-  # The necessaary `AZURE_CLIENT_ID` environment variable is set by the container app module.
+  # Polling configuration
   env_vars = [
     {
       name  = "DESTINY_REPOSITORY_URL"
@@ -45,6 +44,14 @@ module "container_app_toy_robot" {
     {
       name        = "ROBOT_SECRET"
       secret_name = "robot-secret"
+    },
+    {
+      name  = "POLL_INTERVAL_SECONDS",
+      value = "30"
+    },
+    {
+      name  = "BATCH_SIZE",
+      value = "5"
     },
     {
       name  = "OTEL_SERVICE_NAME",
@@ -86,19 +93,6 @@ module "container_app_toy_robot" {
       value = "x-honeycomb-team=${var.honeycomb_api_key}"
     }
   ]
-
-  # Ingress changes will be ignored to avoid messing up manual custom domain config.
-  # See https://github.com/hashicorp/terraform-provider-azurerm/issues/21866#issuecomment-1755381572.
-  ingress = {
-    external_enabled           = true
-    allow_insecure_connections = false
-    target_port                = 8001
-    transport                  = "auto"
-    traffic_weight = {
-      latest_revision = true
-      percentage      = 100
-    }
-  }
 
   # You can see here that we're passing the user assigned identity that we created above to the client application.
   # This identity has the robot role assignment and will allow the robot to authenticate with destiny repository.

@@ -1,5 +1,6 @@
 """API config parsing and model."""
 
+import logging
 import tomllib
 from enum import StrEnum
 from functools import lru_cache
@@ -7,6 +8,14 @@ from pathlib import Path
 
 from pydantic import UUID4, Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def configure_logging() -> None:
+    """Configure logging for the application."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
 
 
 class Environment(StrEnum):
@@ -42,16 +51,14 @@ def read_version_from_toml(path_to_toml: str) -> str:
 
 
 class Settings(BaseSettings):
-    """Settings model for API."""
+    """Settings model for polling robot."""
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    robot_secret: str | None = Field(
-        default=None,
+    robot_secret: str = Field(
         description="Secret needed for communicating with destiny repo.",
     )
-    robot_id: UUID4 | None = Field(
-        default=None,
+    robot_id: UUID4 = Field(
         description="Client id needed for communicating with destiny repository.",
     )
 
@@ -66,6 +73,16 @@ class Settings(BaseSettings):
     env: Environment = Field(
         default=Environment.STAGING,
         description="The environment the toy robot is deployed in.",
+    )
+
+    poll_interval_seconds: int = Field(
+        default=30,
+        description=("How often to poll for new robot enhancement batches (seconds)"),
+    )
+
+    batch_size: int = Field(
+        default=2,
+        description=("The number of references to include per enhancement batch"),
     )
 
 
