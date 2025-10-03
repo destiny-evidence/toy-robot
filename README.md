@@ -68,23 +68,7 @@ Run the robot:
 uv run python run_robot.py
 ```
 
-## Implemented request flows
-
-### Single Enhancement Request Flow
-
-```mermaid
-    sequenceDiagram
-        participant Destiny Repository
-        participant Robot
-        Destiny Repository->>+Robot: POST /<robot_base_url>/single/ : destiny_sdk.robots.RobotRequest
-        Robot->>Robot: Create enhancement background job
-        Robot->>Destiny Repository: Response: 202 Accepted or Failure Status Code
-        alt Background Job Success
-            Robot->>Destiny Repository: POST /robot/enhancement/single/ : destiny_sdk.robots.RobotResult(request_id, enhancement)
-        else Failure
-            Robot->>-Destiny Repository: POST /robot/enhancement/single/ : destiny_sdk.robots.RobotResult(request_id, RobotError)
-        end
-```
+## Implemented request flow
 
 ### Robot Enhancement Batch Flow
 
@@ -95,9 +79,10 @@ uv run python run_robot.py
         participant Robot
         Note over Data Repository: Enhancement request is RECEIVED
         Robot->>Data Repository: POST /robot-enhancement-batches/ : Poll for batches
+        Data Repository->>+Blob Storage: Store requested references and dependent data
         Data Repository->>Robot: RobotEnhancementBatch (batch of references)
         Note over Data Repository: Request status: PROCESSING
-        Blob Storage->>Robot: GET reference_storage_url (download references)
+        Blob Storage->>-Robot: GET reference_storage_url (download references)
         Robot-->>Robot: Process references and create enhancements
         alt More batches available
             Robot->>Data Repository: POST /robot-enhancement-batches/ : Poll for next batch
@@ -107,22 +92,20 @@ uv run python run_robot.py
             Robot->>Data Repository: POST /robot-enhancement-batches/ : Poll for batches
             Data Repository->>Robot: HTTP 204 No Content
         end
-        alt Batch failure
-            Robot->>Data Repository: POST /robot-enhancement-batches/<batch_id>/results/ : RobotEnhancementBatchResult(error)
-        else Batch success
+        alt Batch success
             Robot->>+Blob Storage: PUT result_storage_url (upload enhancements)
             Robot->>Data Repository: POST /robot-enhancement-batches/<batch_id>/results/ : RobotEnhancementBatchResult
+        else Batch failure
+            Robot->>Data Repository: POST /robot-enhancement-batches/<batch_id>/results/ : RobotEnhancementBatchResult(error)
         end
-        Note over Robot: Repeat for all batches until HTTP 204
+        Note over Robot: Repeat...
         Blob Storage->>-Data Repository: Validate and import all enhancements
         Note over Data Repository: Update request state to IMPORTING → INDEXING → COMPLETED
 ```
 
 ## Authentication Against Destiny Repository
 
-Authentication between the Toy Robot and Destiny Repository uses HMAC authentication, where a request signature is encrypted with the robot's secret key and set as a header. To simplify this process, the destiny_sdk provides both a client for communicating with destiny repository that handles adding signatures, and a service auth that can be used to validate incoming requests.
-
-In Toy Robot the client is inititalised in [main.py](app/main.py) and used for sending requests, the service auth is initialised in [auth.py](app/auth.py) and then used as a dependency on the app endpoints in [main.py](app/main.py)
+Authentication between the Toy Robot and Destiny Repository uses HMAC authentication, where a request signature is encrypted with the robot's secret key and set as a header. To simplify this process, the destiny_sdk provides a client for communicating with destiny repository that handles adding signatures. In Toy Robot the client is inititalised in [main.py](app/main.py) and used for sending requests.
 
 ### Configuring Authentication
 
