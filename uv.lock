@@ -34,6 +34,19 @@ wheels = [
 ]
 
 [[package]]
+name = "authlib"
+version = "1.7.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography" },
+    { name = "joserfc" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/36/98/7d93f30d029643c0275dbc0bd6d5a6f670661ee6c9a94d93af7ab4887600/authlib-1.7.2.tar.gz", hash = "sha256:2cea25fefcd4e7173bdf1372c0afc265c8034b23a8cd5dcb6a9164b826c64231", size = 176511, upload-time = "2026-05-06T08:10:23.116Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fb/95/adcb68e20c34162e9135f370d6e31737719c2b6f94bc953fe7ed1f10fe21/authlib-1.7.2-py2.py3-none-any.whl", hash = "sha256:3e1faedc9d87e7d56a164eca3ccb6ace0d61b94abe83e92242f8dc8bba9b4a9f", size = 259548, upload-time = "2026-05-06T08:10:21.436Z" },
+]
+
+[[package]]
 name = "cachetools"
 version = "5.5.2"
 source = { registry = "https://pypi.org/simple" }
@@ -191,19 +204,20 @@ wheels = [
 
 [[package]]
 name = "destiny-sdk"
-version = "0.9.0"
+version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "authlib" },
     { name = "cachetools" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "msal" },
     { name = "pydantic" },
-    { name = "python-jose" },
+    { name = "python-jose", extra = ["cryptography"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c0/98/2f0a60b685457aae8c41d4a62139f9f58bf312119ad4f74b1bf1a2129085/destiny_sdk-0.9.0.tar.gz", hash = "sha256:601578b0a3f2cdab3a290fc1c7ad842ce842b0bac4e618ded8463d957c9c393e", size = 111970, upload-time = "2026-02-04T04:52:41.011Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/d7/4e58f6bb76f804dbd6b9d2b0e9dc2fa295a82aa130c6ba6660e9ab6c231b/destiny_sdk-0.13.0.tar.gz", hash = "sha256:d6bb2e4b2e8d17e6e0cf5f10e8941410bf95f44ec288bd746eda71c189163f6c", size = 125976, upload-time = "2026-06-23T06:02:31.972Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/05/87a2460406deab6d7ed83997cf2788a54f2fa5ecdde33d6df93dc78a40ac/destiny_sdk-0.9.0-py3-none-any.whl", hash = "sha256:51aeaa62cf5d8cd42786392c7830db7012e2f44adf65be6a3b8955d41d25da6e", size = 34060, upload-time = "2026-02-04T04:52:40.186Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/67/33fb98f8e1776aec4baed294322f79c7aa1dcfbb5d7adc27b6baf92d725d/destiny_sdk-0.13.0-py3-none-any.whl", hash = "sha256:87c963c22e9c3b5335a8ad7ff03b6cf4e17ed4f956ab0172c98e68a17d6d98a8", size = 43188, upload-time = "2026-06-23T06:02:32.806Z" },
 ]
 
 [[package]]
@@ -355,6 +369,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/97/ebf4da567aa6827c909642694d71c9fcf53e5b504f2d96afea02718862f3/iniconfig-2.1.0.tar.gz", hash = "sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7", size = 4793, upload-time = "2025-03-19T20:09:59.721Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2c/e1/e6716421ea10d38022b952c159d5161ca1193197fb744506875fbb87ea7b/iniconfig-2.1.0-py3-none-any.whl", hash = "sha256:9deba5723312380e77435581c6bf4935c94cbfab9b1ed33ef8d238ea168eb760", size = 6050, upload-time = "2025-03-19T20:10:01.071Z" },
+]
+
+[[package]]
+name = "joserfc"
+version = "1.7.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d4/c6/b1cac0280f8efc57626ea8804866b37099f23cae11b1485a42b213245e31/joserfc-1.7.3.tar.gz", hash = "sha256:116955c2587139dba20621fd0bd7fc9255fa960c9fe7f43c43ebef2e801dcfcf", size = 233821, upload-time = "2026-07-08T12:41:42.66Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7d/f5/650b59d1b74f5befb7a7a7e7d7c92a26b94256df3541e2b4914152cd177a/joserfc-1.7.3-py3-none-any.whl", hash = "sha256:7c39f3f2c943dbc03122747fa8ebbd8e156e54904cf25651b452f4d2634a6075", size = 70982, upload-time = "2026-07-08T12:41:41.521Z" },
 ]
 
 [[package]]
@@ -823,6 +849,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/d9/c3/0bd11992072e6a1c513b16500a5d07f91a24017c5909b02c72c62d7ad024/python_jose-3.5.0-py2.py3-none-any.whl", hash = "sha256:abd1202f23d34dfad2c3d28cb8617b90acf34132c7afd60abd0b0b7d3cb55771", size = 34624, upload-time = "2025-05-28T17:31:52.802Z" },
 ]
 
+[package.optional-dependencies]
+cryptography = [
+    { name = "cryptography" },
+]
+
 [[package]]
 name = "pyyaml"
 version = "6.0.2"
@@ -947,7 +978,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "destiny-sdk", specifier = ">=0.9.0,<0.10.0" },
+    { name = "destiny-sdk", specifier = ">=0.13.0,<0.14.0" },
     { name = "httpx", specifier = ">=0.28.0,<0.29.0" },
     { name = "opentelemetry-distro", specifier = ">=0.57b0" },
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.36.0" },
